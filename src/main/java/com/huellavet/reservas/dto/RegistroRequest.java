@@ -29,5 +29,5 @@ public record RegistroRequest (
     @Size(max = 100, message = "La ciudad no puede tener más de 100 caracteres")
     String ciudad,
 
-    LocalDate fechaNacimiento;
+    LocalDate fechaNacimiento
 ){}
