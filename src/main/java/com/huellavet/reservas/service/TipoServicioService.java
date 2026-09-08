@@ -1,8 +1,10 @@
 package com.huellavet.reservas.service;
 
+import com.huellavet.reservas.dto.TipoServicioDTO;
 import com.huellavet.reservas.model.TipoServicioModel;
 import com.huellavet.reservas.repository.TipoServicioRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,23 +18,36 @@ public class TipoServicioService {
         this.tipoServicioRepository = tipoServicioRepository;
     }
 
-    public List<TipoServicioModel> listarTipos() {
-        return tipoServicioRepository.findAll();
+    @Transactional(readOnly = true)
+    public List<TipoServicioDTO> listarTipos() {
+        return tipoServicioRepository.findAll()
+                .stream()
+                .map(this::mapearATipoServicioDTO)
+                .toList();
     }
 
-    public Optional<TipoServicioModel> buscarPorId(Long id) {
-        return tipoServicioRepository.findById(id);
+    @Transactional(readOnly = true)
+    public Optional<TipoServicioDTO> buscarPorId(Long id) {
+        return tipoServicioRepository.findById(id)
+                .map(this::mapearATipoServicioDTO);
     }
 
-    public TipoServicioModel crearTipo(TipoServicioModel tipo) {
-        return tipoServicioRepository.save(tipo);
+    @Transactional
+    public Optional<TipoServicioDTO> crearTipo(TipoServicioDTO datos) {
+        TipoServicioModel tipo = new TipoServicioModel();
+        tipo.setNombre(datos.nombre());
+
+        TipoServicioModel creado = tipoServicioRepository.save(tipo);
+        return Optional.of(mapearATipoServicioDTO(creado));
     }
 
-    public Optional<TipoServicioModel> actualizarTipo(Long id, TipoServicioModel datos) {
+    @Transactional
+    public Optional<TipoServicioDTO> actualizarTipo(Long id, TipoServicioDTO datos) {
         return tipoServicioRepository.findById(id)
                 .map(tipo -> {
-                    tipo.setNombre(datos.getNombre());
-                    return tipoServicioRepository.save(tipo);
+                    tipo.setNombre(datos.nombre());
+                    TipoServicioModel actualizado = tipoServicioRepository.save(tipo);
+                    return mapearATipoServicioDTO(actualizado);
                 });
     }
 
@@ -42,5 +57,9 @@ public class TipoServicioService {
         }
         tipoServicioRepository.deleteById(id);
         return true;
+    }
+
+    private TipoServicioDTO mapearATipoServicioDTO(TipoServicioModel tipo) {
+        return new TipoServicioDTO(tipo.getId(), tipo.getNombre());
     }
 }
