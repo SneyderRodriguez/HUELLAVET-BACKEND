@@ -10,20 +10,28 @@ public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(unique = true, nullable = false, length = 150)
     private String email;
+
     @Column(name = "nombre_completo", nullable = false, length = 150)
     private String nombreCompleto;
+
     @Column(nullable = false, length = 20)
-    private String conrasena;
+    private String contrasena;
+
     @Column(length = 15)
     private String telefono;
+
     @Column(name = "indicativo_pais", length = 3)
     private String indicativoPais;
+
     @Column(length = 100)
     private String ciudad;
+
     @Column(name = "fecha_nacimiento")
     private LocalDate fechaNacimiento;
+
     @Column(name = "creado_en", nullable = false)
     private LocalDateTime creadoEn;
 
@@ -55,12 +63,12 @@ public class Usuario {
         this.nombreCompleto = nombreCompleto;
     }
 
-    public String getConrasena() {
-        return conrasena;
+    public String getContrasena() {
+        return contrasena;
     }
 
     public void setConrasena(String conrasena) {
-        this.conrasena = conrasena;
+        this.contrasena = contrasena;
     }
 
     public String getTelefono() {
