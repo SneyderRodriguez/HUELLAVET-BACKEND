@@ -1,4 +1,64 @@
 package com.huellavet.reservas.controller;
 
+import com.huellavet.reservas.dto.MascotaDto;
+import com.huellavet.reservas.model.MascotaModel;
+import com.huellavet.reservas.service.MascotaService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/mascotas")
+@CrossOrigin(origins = "*")
 public class MascotaController {
+
+    private final MascotaService mascotaService;
+
+    public MascotaController(MascotaService mascotaService) {
+        this.mascotaService = mascotaService;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<MascotaModel>> listarTodas() {
+        return ResponseEntity.ok(mascotaService.listarTodas());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<MascotaModel> buscarPorId(@PathVariable Long id) {
+        return mascotaService.buscarPorId(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/usuario/{usuarioId}")
+    public ResponseEntity<List<MascotaModel>> buscarPorUsuario(@PathVariable String usuarioId) {
+        return ResponseEntity.ok(mascotaService.buscarPorUsuario(usuarioId));
+    }
+
+    @PostMapping
+    public ResponseEntity<MascotaModel> crear(@Valid @RequestBody MascotaDto dto) {
+        MascotaModel guardada = mascotaService.guardar(dto);
+        return new ResponseEntity<>(guardada, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<MascotaModel> actualizar(@PathVariable Long id, @Valid @RequestBody MascotaDto dto) {
+        try {
+            MascotaModel actualizada = mascotaService.actualizar(id, dto);
+            return ResponseEntity.ok(actualizada);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+        if (mascotaService.eliminar(id)) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
 }
