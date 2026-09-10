@@ -22,7 +22,7 @@ public class AdministradorModel {
     @Column(unique = true, nullable = false, length = 150)
     private String correo;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false)
     private String contrasena;
 
     @Column(columnDefinition = "TEXT")

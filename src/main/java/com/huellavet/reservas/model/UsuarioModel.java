@@ -17,7 +17,7 @@ public class UsuarioModel {
     @Column(name = "nombre_completo", nullable = false, length = 150)
     private String nombreCompleto;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false)
     private String contrasena;
 
     @Column(length = 15)
