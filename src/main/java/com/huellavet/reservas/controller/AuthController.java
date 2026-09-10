@@ -1,7 +1,7 @@
 package com.huellavet.reservas.controller;
 
-import com.huellavet.reservas.dto.LoginRequest;
-import com.huellavet.reservas.dto.UsuarioResponse;
+import com.huellavet.reservas.dto.UserLoginRequestDTO;
+import com.huellavet.reservas.dto.UsuarioResponseDTO;
 import com.huellavet.reservas.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +16,8 @@ public class AuthController {
         this.authService = authService;
     }
     @PostMapping("/login")
-    public ResponseEntity<UsuarioResponse> iniciarSesion(@Valid @RequestBody LoginRequest request){
-        UsuarioResponse usuario = authService.iniciarSesion(request);
+    public ResponseEntity<UsuarioResponseDTO> iniciarSesion(@Valid @RequestBody UserLoginRequestDTO request){
+        UsuarioResponseDTO usuario = authService.iniciarSesion(request);
         return ResponseEntity.ok(usuario);
     }
 }
