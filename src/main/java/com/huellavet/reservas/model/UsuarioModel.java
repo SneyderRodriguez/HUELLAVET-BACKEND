@@ -1,4 +1,4 @@
-package com.huellavet.reservas.entity;
+package com.huellavet.reservas.model;
 
 import jakarta.persistence.*;
 
@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 @Entity
 @Table(name = "usuarios", uniqueConstraints = {@UniqueConstraint(name = "uk_usuarios_email", columnNames = "email")})
-public class Usuario {
+public class UsuarioModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -41,7 +41,7 @@ public class Usuario {
             creadoEn = LocalDateTime.now();
         }
     }
-    public Usuario() {}
+    public UsuarioModel() {}
 
     public Long getId() {
         return id;
