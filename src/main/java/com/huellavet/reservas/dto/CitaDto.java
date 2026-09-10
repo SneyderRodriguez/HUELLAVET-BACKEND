@@ -5,74 +5,28 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 
-/**
- * Transporta los datos de una cita entre el cliente de la API y el backend.
- *
- * El DTO evita exponer directamente la entidad de persistencia y permite que
- * el servicio controle cuáles valores se copian al crear o actualizar una cita.
- */
 public class CitaDto {
-
-    // Identifica la cita en las respuestas y no reemplaza el ID generado por la base de datos.
     private Long id;
-
-    // Recibe el identificador del usuario que solicita la atención veterinaria.
     private String usuarioId;
-
-    // Recibe el identificador de la mascota que será atendida.
     private String mascotaId;
-
-    // Recibe el identificador numérico del servicio seleccionado.
     private Long servicioId;
-
-    // Transporta la fecha de la cita mediante el formato ISO AAAA-MM-DD.
     private LocalDate fecha;
-
-    // Transporta la hora de la cita mediante un valor compatible con LocalTime.
     private LocalTime hora;
-
-    // Conserva textos como Pendiente para coincidir con las comparaciones del frontend.
     private String estado;
-
-    // Conserva textos como clinica para coincidir con los valores enviados por el formulario.
     private String modalidad;
-
-    // Describe dónde o por qué medio se realizará la atención.
     private String ubicacion;
-
-    // Comunica el profesional asignado cuando la clínica ya realizó esa asignación.
     private String veterinario;
-
-    // Transporta la explicación de la consulta proporcionada por el usuario.
     private String motivo;
-
-    // Indica si la cita necesita un pago previo para reservarse.
     private Boolean tieneCostoReserva;
-
-    // Transporta el valor monetario de la reserva usando precisión decimal.
     private BigDecimal costoReserva;
-
-    // Conserva el nombre visible de la mascota solicitado por el DER y el frontend.
     private String nombreMascota;
-
-    // Conserva el nombre visible del servicio para presentar la cita sin otra consulta.
     private String servicioNombre;
-
-    // Informa el momento de creación sin permitir que el servicio lo copie al actualizar.
     private OffsetDateTime fechaCreacion;
-
-    /**
-     * Permite que Spring cree primero un DTO vacío y después asigne los valores
-     * recibidos en el cuerpo JSON mediante los métodos setter.
-     */
+    private Long administradorId;
+    private String administradorNombre;
     public CitaDto() {
 
     }
-
-    /**
-     * Reúne todos los datos cuando el servicio transforma una entidad en DTO.
-     * El orden de los parámetros coincide con el utilizado en CitaService.
-     */
     public CitaDto(
             Long id,
             String usuarioId,
@@ -108,8 +62,6 @@ public class CitaDto {
         this.fechaCreacion = fechaCreacion;
     }
 
-    // Los getters permiten que el servicio lea los datos recibidos y que Spring
-    // los convierta en propiedades JSON al construir la respuesta HTTP.
     public Long getId() {
         return id;
     }
@@ -174,8 +126,14 @@ public class CitaDto {
         return fechaCreacion;
     }
 
-    // Los setters permiten que Spring asigne al DTO cada propiedad recibida
-    // desde el JSON sin depender de la generación automática de Lombok.
+    public Long getAdministradorId() { return administradorId; }
+
+    public String getAdministradorNombre() { return administradorNombre; }
+
+    public void setAdministradorId(Long administradorId) { this.administradorId = administradorId; }
+
+    public void setAdministradorNombre(String administradorNombre) { this.administradorNombre = administradorNombre; }
+
     public void setId(Long id) {
         this.id = id;
     }
