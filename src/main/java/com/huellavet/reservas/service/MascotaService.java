@@ -2,7 +2,9 @@ package com.huellavet.reservas.service;
 
 import com.huellavet.reservas.dto.MascotaDto;
 import com.huellavet.reservas.model.MascotaModel;
+import com.huellavet.reservas.model.UsuarioModel;
 import com.huellavet.reservas.repository.MascotaRepository;
+import com.huellavet.reservas.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,9 +14,11 @@ import java.util.Optional;
 public class MascotaService {
 
     private final MascotaRepository mascotaRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    public MascotaService(MascotaRepository mascotaRepository) {
+    public MascotaService(MascotaRepository mascotaRepository, UsuarioRepository usuarioRepository) {
         this.mascotaRepository = mascotaRepository;
+        this.usuarioRepository = usuarioRepository;
     }
 
     public List<MascotaModel> listarTodas() {
@@ -26,12 +30,15 @@ public class MascotaService {
     }
 
     public List<MascotaModel> buscarPorUsuario(String usuarioId) {
-        return mascotaRepository.findByUsuarioId(usuarioId);
+        Long id = parsearId(usuarioId);
+        return mascotaRepository.findByUsuarioId(id);
     }
 
     public MascotaModel guardar(MascotaDto dto) {
+        UsuarioModel usuario = usuarioRepository.findById(parsearId(dto.getUsuarioId()))
+                .orElseThrow(() -> new IllegalArgumentException("El usuario dueño de la mascota no existe"));
         MascotaModel nuevaMascota = new MascotaModel(
-                dto.getUsuarioId(),
+                usuario,
                 dto.getNombre(),
                 dto.getEspecie(),
                 dto.getRaza(),
@@ -50,7 +57,9 @@ public class MascotaService {
 
     public MascotaModel actualizar(Long id, MascotaDto dto) {
         return mascotaRepository.findById(id).map(mascota -> {
-            mascota.setUsuarioId(dto.getUsuarioId());
+            UsuarioModel usuario = usuarioRepository.findById(parsearId(dto.getUsuarioId()))
+                    .orElseThrow(() -> new IllegalArgumentException("El usuario dueño de la mascota no existe"));
+            mascota.setUsuario(usuario);
             mascota.setNombre(dto.getNombre());
             mascota.setEspecie(dto.getEspecie());
             mascota.setRaza(dto.getRaza());
@@ -73,5 +82,13 @@ public class MascotaService {
             return true;
         }
         return false;
+    }
+
+    private Long parsearId(String id) {
+        try {
+            return Long.parseLong(id);
+        } catch (NumberFormatException | NullPointerException e) {
+            throw new IllegalArgumentException("El ID del usuario debe ser un número válido");
+        }
     }
 }

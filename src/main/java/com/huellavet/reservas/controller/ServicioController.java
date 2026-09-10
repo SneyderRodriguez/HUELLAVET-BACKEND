@@ -32,17 +32,25 @@ public class ServicioController {
     }
 
     @PostMapping
-    public ResponseEntity<ServicioDTO> crear(@RequestBody ServicioDTO dto) {
-        return servicioService.crearServicio(dto)
-                .map(creado -> ResponseEntity.status(HttpStatus.CREATED).body(creado))
-                .orElse(ResponseEntity.badRequest().build());
+    public ResponseEntity<?> crear(@RequestBody ServicioDTO dto) {
+        try {
+            return servicioService.crearServicio(dto)
+                    .map(creado -> ResponseEntity.status(HttpStatus.CREATED).body(creado))
+                    .orElse(ResponseEntity.badRequest().build());
+        } catch (IllegalArgumentException error) {
+            return ResponseEntity.badRequest().body(error.getMessage());
+        }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ServicioDTO> actualizar(@PathVariable Long id, @RequestBody ServicioDTO dto) {
-        return servicioService.actualizarServicio(id, dto)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody ServicioDTO dto) {
+        try {
+            return servicioService.actualizarServicio(id, dto)
+                    .map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (IllegalArgumentException error) {
+            return ResponseEntity.badRequest().body(error.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")
