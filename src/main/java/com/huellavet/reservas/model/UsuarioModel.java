@@ -1,11 +1,15 @@
 package com.huellavet.reservas.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 @Entity
 @Table(name = "usuarios", uniqueConstraints = {@UniqueConstraint(name = "uk_usuarios_email", columnNames = "email")})
+@Data
+@NoArgsConstructor
 public class UsuarioModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,70 +44,5 @@ public class UsuarioModel {
         if (creadoEn == null) {
             creadoEn = LocalDateTime.now();
         }
-    }
-    public UsuarioModel() {}
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getNombreCompleto() {
-        return nombreCompleto;
-    }
-
-    public void setNombreCompleto(String nombreCompleto) {
-        this.nombreCompleto = nombreCompleto;
-    }
-
-    public String getContrasena() {
-        return contrasena;
-    }
-
-    public void setContrasena(String contrasena) {
-        this.contrasena = contrasena;
-    }
-
-    public String getTelefono() {
-        return telefono;
-    }
-
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
-    }
-
-    public String getIndicativoPais() {
-        return indicativoPais;
-    }
-
-    public void setIndicativoPais(String indicativoPais) {
-        this.indicativoPais = indicativoPais;
-    }
-
-    public String getCiudad() {
-        return ciudad;
-    }
-
-    public void setCiudad(String ciudad) {
-        this.ciudad = ciudad;
-    }
-
-    public LocalDate getFechaNacimiento() {
-        return fechaNacimiento;
-    }
-
-    public void setFechaNacimiento(LocalDate fechaNacimiento) {
-        this.fechaNacimiento = fechaNacimiento;
-    }
-
-    public LocalDateTime getCreadoEn() {
-        return creadoEn;
     }
 }

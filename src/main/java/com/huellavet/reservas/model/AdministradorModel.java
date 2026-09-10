@@ -1,11 +1,15 @@
 package com.huellavet.reservas.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "administradores", uniqueConstraints = {
-        @UniqueConstraint(name = "uk_administradores_correo", columnNames = "correo")
+@Table(name = "administrador", uniqueConstraints = {
+        @UniqueConstraint(name = "uk_administrador_correo", columnNames = "correo")
 })
+@Data
+@NoArgsConstructor
 public class AdministradorModel {
     @Id
     @GeneratedValue(
@@ -27,50 +31,4 @@ public class AdministradorModel {
 
     @Column(columnDefinition = "TEXT")
     private String foto;
-
-    public AdministradorModel() {}
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getNombres() {
-        return nombres;
-    }
-
-    public void setNombres(String nombres) {
-        this.nombres = nombres;
-    }
-
-    public String getApellidos() {
-        return apellidos;
-    }
-
-    public void setApellidos(String apellidos) {
-        this.apellidos = apellidos;
-    }
-
-    public String getCorreo() {
-        return correo;
-    }
-
-    public void setCorreo(String correo) {
-        this.correo = correo;
-    }
-
-    public String getContrasena() {
-        return contrasena;
-    }
-
-    public void setContrasena(String contrasena) {
-        this.contrasena = contrasena;
-    }
-
-    public String getFoto() {
-        return foto;
-    }
-
-    public void setFoto(String foto) {
-        this.foto = foto;
-    }
 }
