@@ -67,7 +67,7 @@ public class UsuarioModel {
         return contrasena;
     }
 
-    public void setContrasena(String conrasena) {
+    public void setContrasena(String contrasena) {
         this.contrasena = contrasena;
     }
 
