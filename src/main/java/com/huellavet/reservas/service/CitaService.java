@@ -85,6 +85,15 @@ public class CitaService {
     }
 
     @Transactional
+    public boolean eliminarPorId(Long id) {
+        if (!citaRepository.existsById(id)) {
+            return false;
+        }
+        citaRepository.deleteById(id);
+        return true;
+    }
+
+    @Transactional
     public CitaDto aceptar(Long id) {
         CitaModel cita = obtenerCitaYValidarVeterinario(id);
         if (cita.getEstado() != EstadoCita.PENDIENTE) {
