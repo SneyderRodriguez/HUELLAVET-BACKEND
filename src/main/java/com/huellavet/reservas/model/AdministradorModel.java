@@ -5,30 +5,23 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "administrador", uniqueConstraints = {
-        @UniqueConstraint(name = "uk_administrador_correo", columnNames = "correo")
+@Table(name = "administradores", uniqueConstraints = {
+        @UniqueConstraint(name = "uk_administradores_correo", columnNames = "correo")
 })
 @Data
 @NoArgsConstructor
 public class AdministradorModel {
+
     @Id
-    @GeneratedValue(
-            strategy = jakarta.persistence.GenerationType.IDENTITY
-    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 30)
-    private String nombres;
-
-    @Column(nullable = false, length = 30)
-    private String apellidos;
+    @Column(nullable = false, length = 100)
+    private String nombreCompleto;
 
     @Column(unique = true, nullable = false, length = 150)
     private String correo;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String contrasena;
-
-    @Column(columnDefinition = "TEXT")
-    private String foto;
 }

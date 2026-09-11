@@ -17,14 +17,14 @@ public class CitaService {
     private final UsuarioRepository usuarioRepository;
     private final MascotaRepository mascotaRepository;
     private final ServicioRepository servicioRepository;
-    private final AdministradorRepository administradorRepository;
+    private final VeterinarioRepository veterinarioRepository;
 
-    public CitaService(CitaRepository citaRepository, UsuarioRepository usuarioRepository, MascotaRepository mascotaRepository, ServicioRepository servicioRepository, AdministradorRepository administradorRepository) {
+    public CitaService(CitaRepository citaRepository, UsuarioRepository usuarioRepository, MascotaRepository mascotaRepository, ServicioRepository servicioRepository, VeterinarioRepository veterinarioRepository) {
         this.citaRepository = citaRepository;
         this.usuarioRepository = usuarioRepository;
         this.mascotaRepository = mascotaRepository;
         this.servicioRepository = servicioRepository;
-        this.administradorRepository = administradorRepository;
+        this.veterinarioRepository = veterinarioRepository;
     }
 
     @Transactional(readOnly = true)
@@ -137,7 +137,7 @@ public class CitaService {
         cita.setServicioNombre(datos.getServicioNombre().trim());
 
         if (datos.getAdministradorId() != null) {
-            AdministradorModel administrador = administradorRepository.findById(datos.getAdministradorId())
+            VeterinarioModel administrador = veterinarioRepository.findById(datos.getAdministradorId())
                     .orElseThrow(() -> new IllegalArgumentException("El administrador asignado no existe"));
             cita.setAdministrador(administrador);
         }

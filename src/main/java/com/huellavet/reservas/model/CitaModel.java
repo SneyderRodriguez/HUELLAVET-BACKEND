@@ -29,7 +29,7 @@ public class CitaModel {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "administrador_id", foreignKey = @ForeignKey(name = "fk_cita_administrador"))
-    private AdministradorModel administrador;
+    private VeterinarioModel administrador;
 
     @Column(nullable = false)
     private LocalDate fecha;
@@ -98,7 +98,7 @@ public class CitaModel {
 
     public ServicioModel getServicio() { return servicio; }
 
-    public AdministradorModel getAdministrador() { return administrador; }
+    public VeterinarioModel getAdministrador() { return administrador; }
 
     public LocalDate getFecha() {
         return fecha;
@@ -154,7 +154,7 @@ public class CitaModel {
 
     public void setServicio(ServicioModel servicio) { this.servicio = servicio; }
 
-    public void setAdministrador(AdministradorModel administrador) { this.administrador = administrador; }
+    public void setAdministrador(VeterinarioModel administrador) { this.administrador = administrador; }
 
     public void setFecha(LocalDate fecha) {
         this.fecha = fecha;

@@ -1,7 +1,8 @@
 package com.huellavet.reservas.controller;
 
-import com.huellavet.reservas.dto.UserLoginRequestDTO;
-import com.huellavet.reservas.dto.UserRegistroRequestDTO;
+import com.huellavet.reservas.dto.LoginRequestDTO;
+import com.huellavet.reservas.dto.LoginResponseDTO;
+import com.huellavet.reservas.dto.RegistroRequestDTO;
 import com.huellavet.reservas.dto.UsuarioResponseDTO;
 import com.huellavet.reservas.service.AuthService;
 import jakarta.validation.Valid;
@@ -11,20 +12,22 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "*")
 public class AuthController {
     private final AuthService authService;
+
     public AuthController(AuthService authService) {
         this.authService = authService;
     }
-    @PostMapping("/login")
-    public ResponseEntity<UsuarioResponseDTO> iniciarSesion(@Valid @RequestBody UserLoginRequestDTO request){
-        UsuarioResponseDTO usuario = authService.iniciarSesion(request);
-        return ResponseEntity.ok(usuario);
-    }
+
     @PostMapping("/registro")
-    public ResponseEntity<UsuarioResponseDTO> registrar(@Valid @RequestBody UserRegistroRequestDTO request) {
+    public ResponseEntity<UsuarioResponseDTO> registrar(@Valid @RequestBody RegistroRequestDTO request){
         UsuarioResponseDTO usuario = authService.registrar(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(usuario);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDTO> iniciarSesion(@Valid @RequestBody LoginRequestDTO request){
+        LoginResponseDTO respuesta = authService.iniciarSesion(request);
+        return ResponseEntity.ok(respuesta);
     }
 }
