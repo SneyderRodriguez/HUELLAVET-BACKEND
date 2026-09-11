@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 
-public record RegistroRequestDTO(
+public record UserRegistroRequestDTO(
     @NotBlank(message = "El nombre completo es obligatorio")
     @Size(max = 150, message = "El nombre no puede tener más de 150 caracteres")
     String nombreCompleto,

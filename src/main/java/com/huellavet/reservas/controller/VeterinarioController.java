@@ -3,6 +3,7 @@ package com.huellavet.reservas.controller;
 import com.huellavet.reservas.dto.AdminLoginRequestDTO;
 import com.huellavet.reservas.dto.AdminResponseDTO;
 import com.huellavet.reservas.dto.LoginResponseDTO;
+import com.huellavet.reservas.dto.VeterinarioLoginRequestDTO;
 import com.huellavet.reservas.service.AuthService;
 import com.huellavet.reservas.service.VeterinarioAuthService;
 import jakarta.validation.Valid;

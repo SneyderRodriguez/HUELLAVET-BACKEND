@@ -1,21 +1,17 @@
 package com.huellavet.reservas.dto;
 
-import com.huellavet.reservas.model.VeterinarioModel;
+import com.huellavet.reservas.model.AdministradorModel;
 
-public record AdminResponseDTO (
+public record AdminResponseDTO(
         Long id,
-        String nombres,
-        String apellidos,
-        String correo,
-        String foto
+        String nombreCompleto,
+        String correo
 ) {
-    public static AdminResponseDTO desdeEntidad(VeterinarioModel veterinarioModel){
+    public static AdminResponseDTO desdeEntidad(AdministradorModel administradorModel) {
         return new AdminResponseDTO(
-                veterinarioModel.getId(),
-                veterinarioModel.getNombres(),
-                veterinarioModel.getApellidos(),
-                veterinarioModel.getCorreo(),
-                veterinarioModel.getFoto()
+                administradorModel.getId(),
+                administradorModel.getNombreCompleto(),
+                administradorModel.getCorreo()
         );
     }
 }
