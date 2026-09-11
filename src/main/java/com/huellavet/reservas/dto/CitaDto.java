@@ -22,8 +22,8 @@ public class CitaDto {
     private String nombreMascota;
     private String servicioNombre;
     private OffsetDateTime fechaCreacion;
-    private Long administradorId;
-    private String administradorNombre;
+    private Long veterinarioId;
+    private String veterinarioNombre;
     public CitaDto() {
 
     }
@@ -126,13 +126,13 @@ public class CitaDto {
         return fechaCreacion;
     }
 
-    public Long getAdministradorId() { return administradorId; }
+    public Long getVeterinarioId() { return veterinarioId; }
 
-    public String getAdministradorNombre() { return administradorNombre; }
+    public String getVeterinarioNombre() { return veterinarioNombre; }
 
-    public void setAdministradorId(Long administradorId) { this.administradorId = administradorId; }
+    public void setVeterinarioId(Long veterinarioId) { this.veterinarioId = veterinarioId; }
 
-    public void setAdministradorNombre(String administradorNombre) { this.administradorNombre = administradorNombre; }
+    public void setVeterinarioNombre(String veterinarioNombre) { this.veterinarioNombre = veterinarioNombre; }
 
     public void setId(Long id) {
         this.id = id;

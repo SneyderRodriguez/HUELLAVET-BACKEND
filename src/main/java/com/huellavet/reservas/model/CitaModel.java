@@ -28,8 +28,8 @@ public class CitaModel {
     private ServicioModel servicio;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "administrador_id", foreignKey = @ForeignKey(name = "fk_cita_administrador"))
-    private VeterinarioModel administrador;
+    @JoinColumn(name = "veterinario_id", foreignKey = @ForeignKey(name = "fk_cita_veterinario"))
+    private VeterinarioModel veterinario;
 
     @Column(nullable = false)
     private LocalDate fecha;
@@ -47,9 +47,6 @@ public class CitaModel {
 
     @Column(length = 200)
     private String ubicacion;
-
-    @Column(length = 150)
-    private String veterinario;
 
     @Column(columnDefinition = "TEXT")
     private String motivo;
@@ -98,7 +95,7 @@ public class CitaModel {
 
     public ServicioModel getServicio() { return servicio; }
 
-    public VeterinarioModel getAdministrador() { return administrador; }
+    public VeterinarioModel getVeterinario() { return veterinario; }
 
     public LocalDate getFecha() {
         return fecha;
@@ -118,10 +115,6 @@ public class CitaModel {
 
     public String getUbicacion() {
         return ubicacion;
-    }
-
-    public String getVeterinario() {
-        return veterinario;
     }
 
     public String getMotivo() {
@@ -154,7 +147,7 @@ public class CitaModel {
 
     public void setServicio(ServicioModel servicio) { this.servicio = servicio; }
 
-    public void setAdministrador(VeterinarioModel administrador) { this.administrador = administrador; }
+    public void setVeterinario(VeterinarioModel veterinario) { this.veterinario = veterinario; }
 
     public void setFecha(LocalDate fecha) {
         this.fecha = fecha;
@@ -174,10 +167,6 @@ public class CitaModel {
 
     public void setUbicacion(String ubicacion) {
         this.ubicacion = ubicacion;
-    }
-
-    public void setVeterinario(String veterinario) {
-        this.veterinario = veterinario;
     }
 
     public void setMotivo(String motivo) {

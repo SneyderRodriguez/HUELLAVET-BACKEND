@@ -1,10 +1,12 @@
 package com.huellavet.reservas.service;
 
 import com.huellavet.reservas.dto.MascotaDto;
+import com.huellavet.reservas.exception.AccesoNoAutorizadoException;
 import com.huellavet.reservas.model.MascotaModel;
 import com.huellavet.reservas.model.UsuarioModel;
 import com.huellavet.reservas.repository.MascotaRepository;
 import com.huellavet.reservas.repository.UsuarioRepository;
+import com.huellavet.reservas.security.AuthenticatedUserService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,10 +17,12 @@ public class MascotaService {
 
     private final MascotaRepository mascotaRepository;
     private final UsuarioRepository usuarioRepository;
+    private final AuthenticatedUserService authenticatedUserService;
 
-    public MascotaService(MascotaRepository mascotaRepository, UsuarioRepository usuarioRepository) {
+    public MascotaService(MascotaRepository mascotaRepository, UsuarioRepository usuarioRepository, AuthenticatedUserService authenticatedUserService) {
         this.mascotaRepository = mascotaRepository;
         this.usuarioRepository = usuarioRepository;
+        this.authenticatedUserService = authenticatedUserService;
     }
 
     public List<MascotaModel> listarTodas() {
@@ -31,10 +35,22 @@ public class MascotaService {
 
     public List<MascotaModel> buscarPorUsuario(String usuarioId) {
         Long id = parsearId(usuarioId);
+        if (authenticatedUserService.obtenerRolActual() == com.huellavet.reservas.model.Rol.USUARIO) {
+            Long idAutenticado = authenticatedUserService.obtenerIdUsuarioActual();
+            if (!idAutenticado.equals(id)) {
+                throw new AccesoNoAutorizadoException("No puedes consultar las mascotas de otro usuario");
+            }
+        }
         return mascotaRepository.findByUsuarioId(id);
     }
 
     public MascotaModel guardar(MascotaDto dto) {
+        Long idUsuarioEnBody = parsearId(dto.getUsuarioId());
+        Long idUsuarioAutenticado = authenticatedUserService.obtenerIdUsuarioActual();
+
+        if (!idUsuarioAutenticado.equals(idUsuarioEnBody)) {
+            throw new AccesoNoAutorizadoException("No puedes crear una mascota para otro usuario");
+        }
         UsuarioModel usuario = usuarioRepository.findById(parsearId(dto.getUsuarioId()))
                 .orElseThrow(() -> new IllegalArgumentException("El usuario dueño de la mascota no existe"));
         MascotaModel nuevaMascota = new MascotaModel(
@@ -56,7 +72,9 @@ public class MascotaService {
     }
 
     public MascotaModel actualizar(Long id, MascotaDto dto) {
-        return mascotaRepository.findById(id).map(mascota -> {
+        MascotaModel mascota = mascotaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Mascota no encontrada con ID: " + id));
+        validarDuenio(mascota);
             UsuarioModel usuario = usuarioRepository.findById(parsearId(dto.getUsuarioId()))
                     .orElseThrow(() -> new IllegalArgumentException("El usuario dueño de la mascota no existe"));
             mascota.setUsuario(usuario);
@@ -73,15 +91,23 @@ public class MascotaService {
             mascota.setObservaciones(dto.getObservaciones());
             mascota.setFoto(dto.getFoto());
             return mascotaRepository.save(mascota);
-        }).orElseThrow(() -> new RuntimeException("Mascota no encontrada con ID: " + id));
     }
 
     public boolean eliminar(Long id) {
-        if (mascotaRepository.existsById(id)) {
-            mascotaRepository.deleteById(id);
-            return true;
+        MascotaModel mascota = mascotaRepository.findById(id).orElse(null);
+        if (mascota == null) {
+            return false;
         }
-        return false;
+        validarDuenio(mascota);
+        mascotaRepository.deleteById(id);
+        return true;
+    }
+
+    private void validarDuenio(MascotaModel mascota) {
+        Long idUsuarioAutenticado = authenticatedUserService.obtenerIdUsuarioActual();
+        if (!mascota.getUsuario().getId().equals(idUsuarioAutenticado)) {
+            throw new AccesoNoAutorizadoException("Esta mascota no te pertenece");
+        }
     }
 
     private Long parsearId(String id) {

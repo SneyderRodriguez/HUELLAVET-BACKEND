@@ -2,6 +2,7 @@ package com.huellavet.reservas.controller;
 
 import com.huellavet.reservas.dto.MascotaDto;
 import com.huellavet.reservas.dto.MascotaResponseDTO;
+import com.huellavet.reservas.exception.AccesoNoAutorizadoException;
 import com.huellavet.reservas.model.MascotaModel;
 import com.huellavet.reservas.service.MascotaService;
 import jakarta.validation.Valid;
@@ -50,6 +51,8 @@ public class MascotaController {
         try {
             MascotaModel guardada = mascotaService.guardar(dto);
             return new ResponseEntity<>(MascotaResponseDTO.desdeEntidad(guardada), HttpStatus.CREATED);
+        } catch (AccesoNoAutorizadoException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -60,6 +63,8 @@ public class MascotaController {
         try {
             MascotaModel actualizada = mascotaService.actualizar(id, dto);
             return ResponseEntity.ok(MascotaResponseDTO.desdeEntidad(actualizada));
+        } catch (AccesoNoAutorizadoException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (RuntimeException e) {
@@ -68,10 +73,14 @@ public class MascotaController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-        if (mascotaService.eliminar(id)) {
-            return ResponseEntity.noContent().build();
+    public ResponseEntity<?> eliminar(@PathVariable Long id) {
+        try {
+            if (mascotaService.eliminar(id)) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.notFound().build();
+        } catch (AccesoNoAutorizadoException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         }
-        return ResponseEntity.notFound().build();
     }
 }
