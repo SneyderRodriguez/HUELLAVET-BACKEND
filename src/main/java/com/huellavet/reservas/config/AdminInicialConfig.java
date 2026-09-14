@@ -11,7 +11,9 @@ public class AdminInicialConfig {
     CommandLineRunner mostrarHash(
             BCryptPasswordEncoder passwordEncoder
     ){
-        return args -> {String hash = passwordEncoder.encode("admin12345");
-            System.out.println("Hash de la contraseña 'admin': " + hash);};
+        return args -> {
+            System.out.println("Hash veterinario: " + passwordEncoder.encode("vet12345"));
+            System.out.println("Hash admin: " + passwordEncoder.encode("admin12345"));
+        };
     }
 }

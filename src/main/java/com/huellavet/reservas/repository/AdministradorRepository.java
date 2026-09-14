@@ -7,5 +7,4 @@ import java.util.Optional;
 
 public interface AdministradorRepository extends JpaRepository<AdministradorModel, Long> {
     Optional<AdministradorModel> findByCorreoIgnoreCase(String correo);
-    boolean existsByCorreoIgnoreCase(String correo);
 }

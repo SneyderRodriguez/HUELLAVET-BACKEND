@@ -2,7 +2,9 @@ package com.huellavet.reservas.service;
 
 import com.huellavet.reservas.dto.ServicioDTO;
 import com.huellavet.reservas.model.ServicioModel;
+import com.huellavet.reservas.model.TipoServicioModel;
 import com.huellavet.reservas.repository.ServicioRepository;
+import com.huellavet.reservas.repository.TipoServicioRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,9 +15,11 @@ import java.util.Optional;
 public class ServicioService {
 
     private final ServicioRepository servicioRepository;
+    private final TipoServicioRepository tipoServicioRepository;
 
-    public ServicioService(ServicioRepository servicioRepository) {
+    public ServicioService(ServicioRepository servicioRepository, TipoServicioRepository tipoServicioRepository) {
         this.servicioRepository = servicioRepository;
+        this.tipoServicioRepository = tipoServicioRepository;
     }
 
     @Transactional(readOnly = true)
@@ -34,8 +38,11 @@ public class ServicioService {
 
     @Transactional
     public Optional<ServicioDTO> crearServicio(ServicioDTO datos) {
+        TipoServicioModel tipoServicio = tipoServicioRepository.findById(datos.tipoServicioId())
+                .orElseThrow(() -> new IllegalArgumentException("El tipo de servicio no existe"));
+
         ServicioModel servicio = new ServicioModel();
-        servicio.setTipoServicioId(datos.tipoServicioId());
+        servicio.setTipoServicio(tipoServicio);
         servicio.setNombre(datos.nombre());
         servicio.setDescripcion(datos.descripcion());
         servicio.setPrecio(datos.precio());
@@ -56,6 +63,10 @@ public class ServicioService {
     public Optional<ServicioDTO> actualizarServicio(Long id, ServicioDTO datos) {
         return servicioRepository.findById(id)
                 .map(servicio -> {
+                    TipoServicioModel tipoServicio = tipoServicioRepository.findById(datos.tipoServicioId())
+                            .orElseThrow(() -> new IllegalArgumentException("El tipo de servicio no existe"));
+
+                    servicio.setTipoServicio(tipoServicio);
                     servicio.setNombre(datos.nombre());
                     servicio.setDescripcion(datos.descripcion());
                     servicio.setPrecio(datos.precio());
@@ -67,7 +78,6 @@ public class ServicioService {
                     servicio.setDireccionClinica(datos.direccionClinica());
                     servicio.setTieneCostoReserva(datos.tieneCostoReserva());
                     servicio.setCostoReserva(datos.costoReserva());
-                    servicio.setTipoServicioId(datos.tipoServicioId());
 
                     ServicioModel actualizado = servicioRepository.save(servicio);
                     return mapearAServicioDTO(actualizado);
@@ -85,7 +95,7 @@ public class ServicioService {
     private ServicioDTO mapearAServicioDTO(ServicioModel servicio) {
         return new ServicioDTO(
                 servicio.getId(),
-                servicio.getTipoServicioId(),
+                servicio.getTipoServicio().getId(),
                 servicio.getNombre(),
                 servicio.getDescripcion(),
                 servicio.getPrecio(),

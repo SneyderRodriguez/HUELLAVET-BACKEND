@@ -26,6 +26,10 @@ public class GlobalExceptionHandler {
         exception.getBindingResult().getFieldErrors().forEach(error -> errores.put(error.getField(), error.getDefaultMessage()));
         return ResponseEntity.badRequest().body(errores);
     }
+    @ExceptionHandler(AccesoNoAutorizadoException.class)
+    public ResponseEntity<Map<String, String>> manejarAccesoNoAutorizado(AccesoNoAutorizadoException exception) {
+        return crearRespuesta(HttpStatus.FORBIDDEN, exception.getMessage());
+    }
     private  ResponseEntity<Map<String, String>> crearRespuesta(HttpStatus estado, String mensaje) {
 
         Map<String, String> respuesta = new HashMap<>();

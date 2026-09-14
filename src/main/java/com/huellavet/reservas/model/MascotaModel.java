@@ -12,8 +12,9 @@ public class MascotaModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String usuarioId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "usuario_id", nullable = false, foreignKey = @ForeignKey(name = "fk_mascota_usuario"))
+    private UsuarioModel usuario;
 
     @Column(nullable = false, length = 100)
     private String nombre;
@@ -53,11 +54,11 @@ public class MascotaModel {
     public MascotaModel() {
     }
 
-    public MascotaModel(String usuarioId, String nombre, String especie, String raza,
+    public MascotaModel(UsuarioModel usuario, String nombre, String especie, String raza,
                         String sexo, LocalDate fechaNacimiento, Double peso, String color,
                         LocalDate fechaUltimaConsulta, String vacunas, String alergias,
                         String observaciones, String foto) {
-        this.usuarioId = usuarioId;
+        this.usuario = usuario;
         this.nombre = nombre;
         this.especie = especie;
         this.raza = raza;
@@ -77,8 +78,8 @@ public class MascotaModel {
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
-    public String getUsuarioId() { return usuarioId; }
-    public void setUsuarioId(String usuarioId) { this.usuarioId = usuarioId; }
+    public UsuarioModel getUsuario() { return usuario; }
+    public void setUsuario(UsuarioModel usuario) { this.usuario = usuario; }
 
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
