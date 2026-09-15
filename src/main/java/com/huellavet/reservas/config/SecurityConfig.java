@@ -36,9 +36,11 @@ public class SecurityConfig {
                         .requestMatchers("/api/veterinario/login").permitAll()
                         .requestMatchers("/api/admin/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/servicios/**", "/api/tipos-servicio/**").permitAll()
+                        .requestMatchers("/api/usuarios/me").hasRole("USUARIO")
+                        .requestMatchers(HttpMethod.GET, "/api/usuarios").hasRole("ADMINISTRADOR")
 
                         .requestMatchers(HttpMethod.POST, "/api/mascotas/**").hasRole("USUARIO")
-                        .requestMatchers(HttpMethod.PUT, "/api/mascotas/**").hasRole("USUARIO")
+                        .requestMatchers(HttpMethod.PUT, "/api/mascotas/**").hasAnyRole("USUARIO", "VETERINARIO")
                         .requestMatchers(HttpMethod.DELETE, "/api/mascotas/**").hasRole("USUARIO")
                         .requestMatchers(HttpMethod.GET, "/api/mascotas/**").hasAnyRole("USUARIO", "VETERINARIO", "ADMINISTRADOR")
 

@@ -74,7 +74,9 @@ public class MascotaService {
     public MascotaModel actualizar(Long id, MascotaDto dto) {
         MascotaModel mascota = mascotaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Mascota no encontrada con ID: " + id));
-        validarDuenio(mascota);
+        if (authenticatedUserService.obtenerRolActual() != com.huellavet.reservas.model.Rol.VETERINARIO) {
+            validarDuenio(mascota);
+        }
             UsuarioModel usuario = usuarioRepository.findById(parsearId(dto.getUsuarioId()))
                     .orElseThrow(() -> new IllegalArgumentException("El usuario dueño de la mascota no existe"));
             mascota.setUsuario(usuario);
