@@ -39,16 +39,8 @@ public class UsuarioController {
     @PutMapping("/me")
     public ResponseEntity<?> actualizarActual(@Valid @RequestBody UsuarioActualizacionDTO datos) {
         UsuarioModel usuario = usuarioActual();
-        String email = datos.email().trim().toLowerCase();
-
-        if (usuarioRepository.findByEmailIgnoreCase(email)
-                .filter(otro -> !otro.getId().equals(usuario.getId()))
-                .isPresent()) {
-            return ResponseEntity.badRequest().body("Ya existe un usuario con ese correo");
-        }
 
         usuario.setNombreCompleto(datos.nombreCompleto().trim());
-        usuario.setEmail(email);
         usuario.setTelefono(datos.telefono());
         usuario.setIndicativoPais(datos.indicativoPais());
         usuario.setCiudad(datos.ciudad());
