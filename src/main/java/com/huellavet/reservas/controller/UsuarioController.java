@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/usuarios")
@@ -52,6 +53,20 @@ public class UsuarioController {
         usuario.setIndicativoPais(datos.indicativoPais());
         usuario.setCiudad(datos.ciudad());
         usuario.setFechaNacimiento(datos.fechaNacimiento());
+        return ResponseEntity.ok(UsuarioResponseDTO.desdeEntidad(usuarioRepository.save(usuario)));
+    }
+
+    @PatchMapping("/{id}/estado")
+    public ResponseEntity<?> cambiarEstado(@PathVariable Long id, @RequestBody java.util.Map<String, Boolean> body) {
+        Boolean activo = body.get("activo");
+        if (activo == null) {
+            return ResponseEntity.badRequest().body("Se requiere el campo 'activo'");
+        }
+        UsuarioModel usuario = usuarioRepository.findById(id).orElse(null);
+        if (usuario == null) {
+            return ResponseEntity.notFound().build();
+        }
+        usuario.setActivo(activo);
         return ResponseEntity.ok(UsuarioResponseDTO.desdeEntidad(usuarioRepository.save(usuario)));
     }
 

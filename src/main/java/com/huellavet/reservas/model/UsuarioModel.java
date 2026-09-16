@@ -45,4 +45,7 @@ public class UsuarioModel {
             creadoEn = LocalDateTime.now();
         }
     }
+
+    @Column(nullable = false)
+    private boolean activo = true;
 }

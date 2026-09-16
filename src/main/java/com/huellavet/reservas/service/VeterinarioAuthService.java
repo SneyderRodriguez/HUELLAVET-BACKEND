@@ -3,6 +3,7 @@ package com.huellavet.reservas.service;
 import com.huellavet.reservas.dto.LoginResponseDTO;
 import com.huellavet.reservas.dto.VeterinarioLoginRequestDTO;
 import com.huellavet.reservas.dto.VeterinarioResponseDTO;
+import com.huellavet.reservas.exception.AccesoNoAutorizadoException;
 import com.huellavet.reservas.exception.CredencialesInvalidasException;
 import com.huellavet.reservas.model.Rol;
 import com.huellavet.reservas.model.VeterinarioModel;
@@ -36,6 +37,9 @@ public class VeterinarioAuthService {
         boolean contrasenaValida = passwordEncoder.matches(request.contrasena(), veterinario.getContrasena());
         if (!contrasenaValida) {
             throw new CredencialesInvalidasException("Correo o contraseña incorrectos");
+        }
+        if (!veterinario.isActivo()) {
+            throw new AccesoNoAutorizadoException("Tu cuenta ha sido inhabilitada. Contacta al administrador.");
         }
 
         String token = jwtService.generarToken(veterinario.getCorreo(), Rol.VETERINARIO.name(), veterinario.getId());

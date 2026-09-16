@@ -31,4 +31,7 @@ public class VeterinarioModel {
 
     @Column(columnDefinition = "TEXT")
     private String foto;
+
+    @Column(nullable = false)
+    private boolean activo = true;
 }

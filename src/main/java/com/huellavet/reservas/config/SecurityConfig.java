@@ -38,6 +38,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/servicios/**", "/api/tipos-servicio/**").permitAll()
                         .requestMatchers("/api/usuarios/me").hasRole("USUARIO")
                         .requestMatchers(HttpMethod.GET, "/api/usuarios").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.PATCH, "/api/usuarios/*/estado").hasRole("ADMINISTRADOR")
 
                         .requestMatchers(HttpMethod.POST, "/api/mascotas/**").hasRole("USUARIO")
                         .requestMatchers(HttpMethod.PUT, "/api/mascotas/**").hasAnyRole("USUARIO", "VETERINARIO")
@@ -62,6 +63,8 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.POST, "/api/veterinario/**").hasRole("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.DELETE, "/api/veterinario/**").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.PATCH, "/api/veterinario/*/estado").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.GET, "/api/veterinario/**").hasAnyRole("USUARIO", "VETERINARIO", "ADMINISTRADOR")
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/servicios/**", "/api/tipos-servicio/**").permitAll()
                         .anyRequest().authenticated()
                 )
@@ -74,7 +77,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOriginPatterns(List.of("*"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

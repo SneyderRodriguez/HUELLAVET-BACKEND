@@ -60,4 +60,17 @@ public class VeterinarioController {
                     .body("No se puede eliminar: el veterinario tiene citas asignadas");
         }
     }
+
+    @PatchMapping("/{id}/estado")
+    public ResponseEntity<?> cambiarEstado(@PathVariable Long id, @RequestBody java.util.Map<String, Boolean> body) {
+        Boolean activo = body.get("activo");
+        if (activo == null) {
+            return ResponseEntity.badRequest().body("Se requiere el campo 'activo'");
+        }
+        try {
+            return ResponseEntity.ok(veterinarioService.cambiarEstado(id, activo));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

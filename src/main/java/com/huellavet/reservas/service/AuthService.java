@@ -4,6 +4,7 @@ import com.huellavet.reservas.dto.*;
 import com.huellavet.reservas.model.AdministradorModel;
 import com.huellavet.reservas.model.Rol;
 import com.huellavet.reservas.model.UsuarioModel;
+import com.huellavet.reservas.exception.AccesoNoAutorizadoException;
 import com.huellavet.reservas.exception.CorreoYaRegistradoException;
 import com.huellavet.reservas.exception.CredencialesInvalidasException;
 import com.huellavet.reservas.repository.AdministradorRepository;
@@ -56,6 +57,9 @@ public class AuthService {
         UsuarioModel usuarioModel = usuarioRepository.findByEmailIgnoreCase(emailNormalizado)
                 .orElseThrow(() -> new CredencialesInvalidasException("Correo o contraseña incorrectos"));
         validarContrasena(request.contrasena(), usuarioModel.getContrasena());
+        if (!usuarioModel.isActivo()) {
+            throw new AccesoNoAutorizadoException("Tu cuenta ha sido inhabilitada. Contacta al administrador.");
+        }
 
         String token = jwtService.generarToken(usuarioModel.getEmail(), Rol.USUARIO.name(), usuarioModel.getId());
         UsuarioResponseDTO datos = UsuarioResponseDTO.desdeEntidad(usuarioModel);
@@ -68,7 +72,9 @@ public class AuthService {
         String correoNormalizado = normalizarEmail(request.correo());
         AdministradorModel administradorModel = administradorRepository.findByCorreoIgnoreCase(correoNormalizado)
                 .orElseThrow(() -> new CredencialesInvalidasException("Correo o contraseña incorrectos"));
-        validarContrasena(request.contrasena(), administradorModel.getContrasena());
+        if (!request.contrasena().equals(administradorModel.getContrasena())) {
+            throw new CredencialesInvalidasException("Correo o contraseña incorrectos");
+        }
 
         String token = jwtService.generarToken(administradorModel.getCorreo(), Rol.ADMINISTRADOR.name(), administradorModel.getId());
         AdminResponseDTO datos = AdminResponseDTO.desdeEntidad(administradorModel);
