@@ -56,4 +56,12 @@ public class VeterinarioService {
         veterinarioRepository.deleteById(id);
         return true;
     }
+
+    @Transactional
+    public VeterinarioResponseDTO cambiarEstado(Long id, boolean activo) {
+        VeterinarioModel veterinario = veterinarioRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Veterinario no encontrado"));
+        veterinario.setActivo(activo);
+        return VeterinarioResponseDTO.desdeEntidad(veterinarioRepository.save(veterinario));
+    }
 }
