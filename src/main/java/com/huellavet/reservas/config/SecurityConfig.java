@@ -45,9 +45,11 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/mascotas/**").hasAnyRole("USUARIO", "VETERINARIO", "ADMINISTRADOR")
 
                         .requestMatchers(HttpMethod.POST, "/api/citas/**").hasRole("USUARIO")
-                        .requestMatchers("/api/citas/*/aceptar", "/api/citas/*/rechazar", "/api/citas/*/completar")
+                        .requestMatchers("/api/citas/*/aceptar", "/api/citas/*/rechazar", "/api/citas/*/iniciar", "/api/citas/*/completar", "/api/citas/*/marcar-reprogramada")
                         .hasAnyRole("VETERINARIO", "ADMINISTRADOR")
-                        .requestMatchers("/api/citas/*/cancelar", "/api/citas/*/reprogramar")
+                        .requestMatchers("/api/citas/*/cancelar")
+                        .hasAnyRole("USUARIO", "VETERINARIO", "ADMINISTRADOR")
+                        .requestMatchers("/api/citas/*/reprogramar")
                         .hasAnyRole("USUARIO", "ADMINISTRADOR")
                         .requestMatchers(HttpMethod.GET, "/api/citas/**").hasAnyRole("USUARIO", "VETERINARIO", "ADMINISTRADOR")
 

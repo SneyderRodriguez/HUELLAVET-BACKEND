@@ -114,6 +114,16 @@ public class CitaService {
     }
 
     @Transactional
+    public CitaDto iniciar(Long id) {
+        CitaModel cita = obtenerCitaYValidarVeterinario(id);
+        if (cita.getEstado() != EstadoCita.CONFIRMADA) {
+            throw new IllegalArgumentException("Solo se puede iniciar una cita en estado Confirmada");
+        }
+        cita.setEstado(EstadoCita.EN_CURSO);
+        return convertirADto(citaRepository.save(cita));
+    }
+
+    @Transactional
     public CitaDto completar(Long id) {
         CitaModel cita = obtenerCitaYValidarVeterinario(id);
         if (cita.getEstado() != EstadoCita.CONFIRMADA && cita.getEstado() != EstadoCita.EN_CURSO) {
@@ -145,6 +155,13 @@ public class CitaService {
         return convertirADto(citaRepository.save(cita));
     }
 
+    @Transactional
+    public CitaDto marcarReprogramada(Long id) {
+        CitaModel cita = obtenerCitaYValidarVeterinario(id);
+        cita.setEstado(EstadoCita.REPROGRAMADA);
+        return convertirADto(citaRepository.save(cita));
+    }
+
     private CitaModel obtenerCitaYValidarVeterinario(Long id) {
         CitaModel cita = citaRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("La cita no existe"));
@@ -166,6 +183,29 @@ public class CitaService {
 
         if (authenticatedUserService.esAdministrador()) {
             return cita;
+        }
+
+        Long idUsuarioAutenticado = authenticatedUserService.obtenerIdUsuarioActual();
+        if (!cita.getUsuario().getId().equals(idUsuarioAutenticado)) {
+            throw new AccesoNoAutorizadoException("Esta cita no te pertenece");
+        }
+        return cita;
+    }
+
+    private CitaModel obtenerCitaYValidarUsuarioOVeterinario(Long id) {
+        CitaModel cita = citaRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("La cita no existe"));
+
+        if (authenticatedUserService.esAdministrador()) {
+            return cita;
+        }
+
+        if (authenticatedUserService.obtenerRolActual() == Rol.VETERINARIO) {
+            Long idVeterinarioAutenticado = authenticatedUserService.obtenerIdVeterinarioActual();
+            if (cita.getVeterinario() != null && cita.getVeterinario().getId().equals(idVeterinarioAutenticado)) {
+                return cita;
+            }
+            throw new AccesoNoAutorizadoException("Esta cita no está asignada a ti");
         }
 
         Long idUsuarioAutenticado = authenticatedUserService.obtenerIdUsuarioActual();

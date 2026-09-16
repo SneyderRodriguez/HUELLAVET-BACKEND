@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/citas")
@@ -72,6 +71,11 @@ public class CitaController {
         return ejecutarCambioEstado(() -> citaService.rechazar(id));
     }
 
+    @PutMapping("/{id}/iniciar")
+    public ResponseEntity<?> iniciar(@PathVariable Long id) {
+        return ejecutarCambioEstado(() -> citaService.iniciar(id));
+    }
+
     @PutMapping("/{id}/completar")
     public ResponseEntity<?> completar(@PathVariable Long id) {
         return ejecutarCambioEstado(() -> citaService.completar(id));
@@ -87,6 +91,10 @@ public class CitaController {
         return ejecutarCambioEstado(() -> citaService.reprogramar(id, datosNuevos));
     }
 
+    @PutMapping("/{id}/marcar-reprogramada")
+    public ResponseEntity<?> marcarReprogramada(@PathVariable Long id) {
+        return ejecutarCambioEstado(() -> citaService.marcarReprogramada(id));
+    }
     private ResponseEntity<?> ejecutarCambioEstado(java.util.function.Supplier<CitaDto> accion) {
         try {
             return ResponseEntity.ok(accion.get());
