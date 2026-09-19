@@ -1,10 +1,13 @@
 package com.huellavet.reservas.controller;
 
 import com.huellavet.reservas.dto.LoginResponseDTO;
+import com.huellavet.reservas.dto.VeterinarioContrasenaRequestDTO;
 import com.huellavet.reservas.dto.VeterinarioLoginRequestDTO;
+import com.huellavet.reservas.dto.VeterinarioPerfilRequestDTO;
 import com.huellavet.reservas.dto.VeterinarioRegistroRequestDTO;
 import com.huellavet.reservas.dto.VeterinarioResponseDTO;
 import com.huellavet.reservas.exception.CorreoYaRegistradoException;
+import com.huellavet.reservas.security.AuthenticatedUserService;
 import com.huellavet.reservas.service.VeterinarioAuthService;
 import com.huellavet.reservas.service.VeterinarioService;
 import jakarta.validation.Valid;
@@ -14,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/veterinario")
@@ -21,10 +25,34 @@ public class VeterinarioController {
 
     private final VeterinarioAuthService veterinarioAuthService;
     private final VeterinarioService veterinarioService;
+    private final AuthenticatedUserService authenticatedUserService;
 
-    public VeterinarioController(VeterinarioAuthService veterinarioAuthService, VeterinarioService veterinarioService) {
+    public VeterinarioController(VeterinarioAuthService veterinarioAuthService,
+                                 VeterinarioService veterinarioService,
+                                 AuthenticatedUserService authenticatedUserService) {
         this.veterinarioAuthService = veterinarioAuthService;
         this.veterinarioService = veterinarioService;
+        this.authenticatedUserService = authenticatedUserService;
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<VeterinarioResponseDTO> obtenerActual() {
+        return ResponseEntity.ok(veterinarioService.obtenerPorId(authenticatedUserService.obtenerIdVeterinarioActual()));
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<VeterinarioResponseDTO> actualizarPerfilActual(@Valid @RequestBody VeterinarioPerfilRequestDTO request) {
+        return ResponseEntity.ok(veterinarioService.actualizarPerfil(authenticatedUserService.obtenerIdVeterinarioActual(), request));
+    }
+
+    @PutMapping("/me/contrasena")
+    public ResponseEntity<?> cambiarContrasenaActual(@Valid @RequestBody VeterinarioContrasenaRequestDTO request) {
+        try {
+            veterinarioService.cambiarContrasena(authenticatedUserService.obtenerIdVeterinarioActual(), request);
+            return ResponseEntity.ok(Map.of("mensaje", "Contraseña actualizada correctamente"));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("mensaje", e.getMessage()));
+        }
     }
 
     @PostMapping("/login")

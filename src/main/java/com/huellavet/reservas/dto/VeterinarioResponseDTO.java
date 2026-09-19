@@ -7,7 +7,10 @@ public record VeterinarioResponseDTO(
         String nombres,
         String apellidos,
         String correo,
-        String foto
+        String foto,
+        String telefono,
+        String indicativoPais,
+        String ciudad
 ) {
     public static VeterinarioResponseDTO desdeEntidad(VeterinarioModel veterinarioModel) {
         return new VeterinarioResponseDTO(
@@ -15,7 +18,10 @@ public record VeterinarioResponseDTO(
                 veterinarioModel.getNombres(),
                 veterinarioModel.getApellidos(),
                 veterinarioModel.getCorreo(),
-                veterinarioModel.getFoto()
+                veterinarioModel.getFoto(),
+                veterinarioModel.getTelefono(),
+                veterinarioModel.getIndicativoPais(),
+                veterinarioModel.getCiudad()
         );
     }
 }

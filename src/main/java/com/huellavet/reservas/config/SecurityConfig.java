@@ -37,6 +37,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/servicios/**", "/api/tipos-servicio/**").permitAll()
                         .requestMatchers("/api/usuarios/me").hasRole("USUARIO")
+                        .requestMatchers("/api/veterinario/me", "/api/veterinario/me/contrasena").hasRole("VETERINARIO")
                         .requestMatchers(HttpMethod.GET, "/api/usuarios").hasRole("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.PATCH, "/api/usuarios/*/estado").hasRole("ADMINISTRADOR")
 

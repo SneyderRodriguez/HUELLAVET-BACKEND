@@ -1,5 +1,7 @@
 package com.huellavet.reservas.service;
 
+import com.huellavet.reservas.dto.VeterinarioContrasenaRequestDTO;
+import com.huellavet.reservas.dto.VeterinarioPerfilRequestDTO;
 import com.huellavet.reservas.dto.VeterinarioRegistroRequestDTO;
 import com.huellavet.reservas.dto.VeterinarioResponseDTO;
 import com.huellavet.reservas.exception.CorreoYaRegistradoException;
@@ -46,6 +48,35 @@ public class VeterinarioService {
 
         VeterinarioModel guardado = veterinarioRepository.save(veterinario);
         return VeterinarioResponseDTO.desdeEntidad(guardado);
+    }
+
+    @Transactional(readOnly = true)
+    public VeterinarioResponseDTO obtenerPorId(Long id) {
+        return VeterinarioResponseDTO.desdeEntidad(buscarPorId(id));
+    }
+
+    @Transactional
+    public VeterinarioResponseDTO actualizarPerfil(Long id, VeterinarioPerfilRequestDTO request) {
+        VeterinarioModel veterinario = buscarPorId(id);
+        veterinario.setTelefono(request.telefono().trim());
+        veterinario.setIndicativoPais(request.indicativoPais() == null ? null : request.indicativoPais().trim());
+        veterinario.setCiudad(request.ciudad().trim());
+        return VeterinarioResponseDTO.desdeEntidad(veterinarioRepository.save(veterinario));
+    }
+
+    @Transactional
+    public void cambiarContrasena(Long id, VeterinarioContrasenaRequestDTO request) {
+        VeterinarioModel veterinario = buscarPorId(id);
+        if (!passwordEncoder.matches(request.contrasenaActual(), veterinario.getContrasena())) {
+            throw new IllegalArgumentException("La contraseña actual no es correcta");
+        }
+        veterinario.setContrasena(passwordEncoder.encode(request.contrasenaNueva()));
+        veterinarioRepository.save(veterinario);
+    }
+
+    private VeterinarioModel buscarPorId(Long id) {
+        return veterinarioRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Veterinario no encontrado"));
     }
 
     @Transactional
