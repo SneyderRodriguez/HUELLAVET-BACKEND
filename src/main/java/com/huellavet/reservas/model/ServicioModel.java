@@ -50,8 +50,17 @@ public class ServicioModel {
     @Column(name = "costo_reserva")
     private Double costoReserva;
 
+    @Column(length = 100)
     private String icono;
 
     @Column(columnDefinition = "TEXT")
     private String imagen;
+
+    @Column(name = "mostrar_en_home")
+    private Boolean mostrarEnHome;
+
+    private Boolean destacado;
+
+    @Column(name = "orden_inicio")
+    private Integer ordenInicio;
 }

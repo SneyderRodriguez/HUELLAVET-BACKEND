@@ -3,10 +3,12 @@ package com.huellavet.reservas.controller;
 import com.huellavet.reservas.dto.CitaDto;
 import com.huellavet.reservas.exception.AccesoNoAutorizadoException;
 import com.huellavet.reservas.service.CitaService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -22,6 +24,11 @@ public class CitaController {
     @GetMapping
     public ResponseEntity<List<CitaDto>> listarTodas() {
         return ResponseEntity.ok(citaService.listarTodas());
+    }
+
+    @GetMapping("/ocupadas")
+    public ResponseEntity<?> horasOcupadas(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
+        return ResponseEntity.ok(citaService.listarHorasOcupadas(fecha));
     }
 
     @GetMapping("/{id}")
@@ -86,9 +93,24 @@ public class CitaController {
         return ejecutarCambioEstado(() -> citaService.cancelar(id));
     }
 
+    @PutMapping("/{id}/recordatorio")
+    public ResponseEntity<?> guardarRecordatorio(@PathVariable Long id, @RequestBody CitaDto datos) {
+        return ejecutarCambioEstado(() -> citaService.guardarRecordatorio(id, datos));
+    }
+
+    @PutMapping("/{id}/abono")
+    public ResponseEntity<?> registrarAbono(@PathVariable Long id, @RequestBody CitaDto datos) {
+        return ejecutarCambioEstado(() -> citaService.registrarAbono(id, datos));
+    }
+
     @PutMapping("/{id}/reprogramar")
     public ResponseEntity<?> reprogramar(@PathVariable Long id, @RequestBody CitaDto datosNuevos) {
         return ejecutarCambioEstado(() -> citaService.reprogramar(id, datosNuevos));
+    }
+
+    @PutMapping("/{id}/solicitar-reprogramacion")
+    public ResponseEntity<?> solicitarReprogramacion(@PathVariable Long id, @RequestBody(required = false) CitaDto datos) {
+        return ejecutarCambioEstado(() -> citaService.solicitarReprogramacion(id, datos == null ? null : datos.getMotivoEstado()));
     }
 
     @PutMapping("/{id}/marcar-reprogramada")

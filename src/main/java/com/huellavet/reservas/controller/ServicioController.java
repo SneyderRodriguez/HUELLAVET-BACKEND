@@ -1,6 +1,7 @@
 package com.huellavet.reservas.controller;
 
 import com.huellavet.reservas.dto.ServicioDTO;
+import com.huellavet.reservas.dto.ServiciosInicioDTO;
 import com.huellavet.reservas.service.ServicioService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,6 +42,15 @@ public class ServicioController {
         }
     }
 
+    @PutMapping("/inicio")
+    public ResponseEntity<?> definirServiciosInicio(@RequestBody ServiciosInicioDTO dto) {
+        try {
+            return ResponseEntity.ok(servicioService.definirServiciosInicio(dto == null ? null : dto.ids()));
+        } catch (IllegalArgumentException error) {
+            return ResponseEntity.badRequest().body(error.getMessage());
+        }
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody ServicioDTO dto) {
         try {
@@ -53,9 +63,14 @@ public class ServicioController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-        return servicioService.eliminarServicio(id)
-                ? ResponseEntity.noContent().build()
-                : ResponseEntity.notFound().build();
+    public ResponseEntity<?> eliminar(@PathVariable Long id) {
+        try {
+            return servicioService.eliminarServicio(id)
+                    ? ResponseEntity.noContent().build()
+                    : ResponseEntity.notFound().build();
+        } catch (org.springframework.dao.DataIntegrityViolationException error) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("No se puede eliminar el servicio porque tiene citas asociadas");
+        }
     }
 }

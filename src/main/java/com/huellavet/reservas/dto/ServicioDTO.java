@@ -15,6 +15,9 @@ public record ServicioDTO(
         Boolean tieneCostoReserva,
         Double costoReserva,
         String icono,
-        String imagen
+        String imagen,
+        Boolean mostrarEnHome,
+        Boolean destacado,
+        Integer ordenInicio
 ) {
 }

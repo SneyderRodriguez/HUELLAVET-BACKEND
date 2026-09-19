@@ -8,12 +8,14 @@ import com.huellavet.reservas.repository.TipoServicioRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class ServicioService {
-
+    public static final int MAX_SERVICIOS_INICIO = 3;
     private final ServicioRepository servicioRepository;
     private final TipoServicioRepository tipoServicioRepository;
 
@@ -88,6 +90,35 @@ public class ServicioService {
                 });
     }
 
+    @Transactional
+    public List<ServicioDTO> definirServiciosInicio(List<Long> ids) {
+        List<Long> seleccion = (ids == null ? List.<Long>of() : ids).stream()
+                .filter(java.util.Objects::nonNull)
+                .distinct()
+                .limit(MAX_SERVICIOS_INICIO)
+                .toList();
+
+        List<ServicioModel> servicios = servicioRepository.findAll();
+        Set<Long> existentes = new HashSet<>();
+        servicios.forEach(servicio -> existentes.add(servicio.getId()));
+        for (Long id : seleccion) {
+            if (!existentes.contains(id)) {
+                throw new IllegalArgumentException("El servicio " + id + " no existe");
+            }
+        }
+
+        for (ServicioModel servicio : servicios) {
+            int indice = seleccion.indexOf(servicio.getId());
+            servicio.setMostrarEnHome(indice != -1);
+            servicio.setDestacado(indice == 0);
+            servicio.setOrdenInicio(indice == -1 ? null : indice + 1);
+        }
+
+        return servicioRepository.saveAll(servicios).stream()
+                .map(this::mapearAServicioDTO)
+                .toList();
+    }
+
     public boolean eliminarServicio(Long id) {
         if (!servicioRepository.existsById(id)) {
             return false;
@@ -112,7 +143,10 @@ public class ServicioService {
                 servicio.getTieneCostoReserva(),
                 servicio.getCostoReserva(),
                 servicio.getIcono(),
-                servicio.getImagen()
+                servicio.getImagen(),
+                Boolean.TRUE.equals(servicio.getMostrarEnHome()),
+                Boolean.TRUE.equals(servicio.getDestacado()),
+                servicio.getOrdenInicio()
         );
     }
 }

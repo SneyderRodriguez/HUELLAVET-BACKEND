@@ -46,6 +46,7 @@ public class MascotaModel {
     @Column(columnDefinition = "TEXT")
     private String observaciones;
 
+    @Column(columnDefinition = "TEXT")
     private String foto;
 
     @Column(updatable = false)
