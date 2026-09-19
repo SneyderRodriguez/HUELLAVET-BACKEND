@@ -54,6 +54,8 @@ public class ServicioService {
         servicio.setDireccionClinica(datos.direccionClinica());
         servicio.setTieneCostoReserva(datos.tieneCostoReserva());
         servicio.setCostoReserva(datos.costoReserva());
+        servicio.setIcono(datos.icono());
+        servicio.setImagen(datos.imagen());
 
         ServicioModel creado = servicioRepository.save(servicio);
         return Optional.of(mapearAServicioDTO(creado));
@@ -78,6 +80,8 @@ public class ServicioService {
                     servicio.setDireccionClinica(datos.direccionClinica());
                     servicio.setTieneCostoReserva(datos.tieneCostoReserva());
                     servicio.setCostoReserva(datos.costoReserva());
+        servicio.setIcono(datos.icono());
+        servicio.setImagen(datos.imagen());
 
                     ServicioModel actualizado = servicioRepository.save(servicio);
                     return mapearAServicioDTO(actualizado);
@@ -106,7 +110,9 @@ public class ServicioService {
                 servicio.getEsClinica(),
                 servicio.getDireccionClinica(),
                 servicio.getTieneCostoReserva(),
-                servicio.getCostoReserva()
+                servicio.getCostoReserva(),
+                servicio.getIcono(),
+                servicio.getImagen()
         );
     }
 }

@@ -49,4 +49,9 @@ public class ServicioModel {
 
     @Column(name = "costo_reserva")
     private Double costoReserva;
+
+    private String icono;
+
+    @Column(columnDefinition = "TEXT")
+    private String imagen;
 }

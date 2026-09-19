@@ -13,6 +13,8 @@ public record ServicioDTO(
         Boolean esClinica,
         String direccionClinica,
         Boolean tieneCostoReserva,
-        Double costoReserva
+        Double costoReserva,
+        String icono,
+        String imagen
 ) {
 }
