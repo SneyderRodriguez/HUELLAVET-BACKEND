@@ -66,6 +66,42 @@ public class CitaModel {
     @Column(name = "fecha_creacion", nullable = false, updatable = false)
     private OffsetDateTime fechaCreacion;
 
+    @Column(name = "motivo_estado", columnDefinition = "TEXT")
+    private String motivoEstado;
+
+    @Column(name = "abono_estado", length = 20)
+    private String abonoEstado;
+
+    @Column(name = "abono_comprobante", columnDefinition = "TEXT")
+    private String abonoComprobante;
+
+    @Column(name = "abono_fecha_pago")
+    private OffsetDateTime abonoFechaPago;
+
+    @Column(name = "recordatorio_texto", columnDefinition = "TEXT")
+    private String recordatorioTexto;
+
+    @Column(name = "recordatorio_fecha")
+    private LocalDate recordatorioFecha;
+
+    @Column(name = "recordatorio_fecha_creacion")
+    private OffsetDateTime recordatorioFechaCreacion;
+
+    @Column(name = "cliente_nombre", length = 150)
+    private String clienteNombre;
+
+    @Column(name = "cliente_telefono", length = 40)
+    private String clienteTelefono;
+
+    @Column(name = "cliente_email", length = 150)
+    private String clienteEmail;
+
+    @Column(name = "cliente_direccion", length = 250)
+    private String clienteDireccion;
+
+    @Column(name = "canal_recordatorio", length = 20)
+    private String canalRecordatorio;
+
     public CitaModel() {
 
     }
@@ -82,6 +118,9 @@ public class CitaModel {
         }
         if (fechaCreacion == null) {
             fechaCreacion = OffsetDateTime.now();
+        }
+        if (abonoEstado == null) {
+            abonoEstado = "pendiente";
         }
     }
 
@@ -188,4 +227,52 @@ public class CitaModel {
     public void setServicioNombre(String servicioNombre) {
         this.servicioNombre = servicioNombre;
     }
+
+    public String getMotivoEstado() { return motivoEstado; }
+
+    public void setMotivoEstado(String motivoEstado) { this.motivoEstado = motivoEstado; }
+
+    public String getAbonoEstado() { return abonoEstado; }
+
+    public void setAbonoEstado(String abonoEstado) { this.abonoEstado = abonoEstado; }
+
+    public String getAbonoComprobante() { return abonoComprobante; }
+
+    public void setAbonoComprobante(String abonoComprobante) { this.abonoComprobante = abonoComprobante; }
+
+    public OffsetDateTime getAbonoFechaPago() { return abonoFechaPago; }
+
+    public void setAbonoFechaPago(OffsetDateTime abonoFechaPago) { this.abonoFechaPago = abonoFechaPago; }
+
+    public String getRecordatorioTexto() { return recordatorioTexto; }
+
+    public void setRecordatorioTexto(String recordatorioTexto) { this.recordatorioTexto = recordatorioTexto; }
+
+    public LocalDate getRecordatorioFecha() { return recordatorioFecha; }
+
+    public void setRecordatorioFecha(LocalDate recordatorioFecha) { this.recordatorioFecha = recordatorioFecha; }
+
+    public OffsetDateTime getRecordatorioFechaCreacion() { return recordatorioFechaCreacion; }
+
+    public void setRecordatorioFechaCreacion(OffsetDateTime recordatorioFechaCreacion) { this.recordatorioFechaCreacion = recordatorioFechaCreacion; }
+
+    public String getClienteNombre() { return clienteNombre; }
+
+    public void setClienteNombre(String clienteNombre) { this.clienteNombre = clienteNombre; }
+
+    public String getClienteTelefono() { return clienteTelefono; }
+
+    public void setClienteTelefono(String clienteTelefono) { this.clienteTelefono = clienteTelefono; }
+
+    public String getClienteEmail() { return clienteEmail; }
+
+    public void setClienteEmail(String clienteEmail) { this.clienteEmail = clienteEmail; }
+
+    public String getClienteDireccion() { return clienteDireccion; }
+
+    public void setClienteDireccion(String clienteDireccion) { this.clienteDireccion = clienteDireccion; }
+
+    public String getCanalRecordatorio() { return canalRecordatorio; }
+
+    public void setCanalRecordatorio(String canalRecordatorio) { this.canalRecordatorio = canalRecordatorio; }
 }

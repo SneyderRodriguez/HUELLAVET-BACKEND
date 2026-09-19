@@ -24,6 +24,19 @@ public class CitaDto {
     private OffsetDateTime fechaCreacion;
     private Long veterinarioId;
     private String veterinarioNombre;
+    private String fotoMascota;
+    private String motivoEstado;
+    private String abonoEstado;
+    private String abonoComprobante;
+    private OffsetDateTime abonoFechaPago;
+    private String recordatorioTexto;
+    private LocalDate recordatorioFecha;
+    private OffsetDateTime recordatorioFechaCreacion;
+    private String clienteNombre;
+    private String clienteTelefono;
+    private String clienteEmail;
+    private String clienteDireccion;
+    private String canalRecordatorio;
     public CitaDto() {
 
     }
@@ -197,4 +210,56 @@ public class CitaDto {
     public void setFechaCreacion(OffsetDateTime fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
     }
+
+    public String getFotoMascota() { return fotoMascota; }
+
+    public void setFotoMascota(String fotoMascota) { this.fotoMascota = fotoMascota; }
+
+    public String getMotivoEstado() { return motivoEstado; }
+
+    public void setMotivoEstado(String motivoEstado) { this.motivoEstado = motivoEstado; }
+
+    public String getAbonoEstado() { return abonoEstado; }
+
+    public void setAbonoEstado(String abonoEstado) { this.abonoEstado = abonoEstado; }
+
+    public String getAbonoComprobante() { return abonoComprobante; }
+
+    public void setAbonoComprobante(String abonoComprobante) { this.abonoComprobante = abonoComprobante; }
+
+    public OffsetDateTime getAbonoFechaPago() { return abonoFechaPago; }
+
+    public void setAbonoFechaPago(OffsetDateTime abonoFechaPago) { this.abonoFechaPago = abonoFechaPago; }
+
+    public String getRecordatorioTexto() { return recordatorioTexto; }
+
+    public void setRecordatorioTexto(String recordatorioTexto) { this.recordatorioTexto = recordatorioTexto; }
+
+    public LocalDate getRecordatorioFecha() { return recordatorioFecha; }
+
+    public void setRecordatorioFecha(LocalDate recordatorioFecha) { this.recordatorioFecha = recordatorioFecha; }
+
+    public OffsetDateTime getRecordatorioFechaCreacion() { return recordatorioFechaCreacion; }
+
+    public void setRecordatorioFechaCreacion(OffsetDateTime recordatorioFechaCreacion) { this.recordatorioFechaCreacion = recordatorioFechaCreacion; }
+
+    public String getClienteNombre() { return clienteNombre; }
+
+    public void setClienteNombre(String clienteNombre) { this.clienteNombre = clienteNombre; }
+
+    public String getClienteTelefono() { return clienteTelefono; }
+
+    public void setClienteTelefono(String clienteTelefono) { this.clienteTelefono = clienteTelefono; }
+
+    public String getClienteEmail() { return clienteEmail; }
+
+    public void setClienteEmail(String clienteEmail) { this.clienteEmail = clienteEmail; }
+
+    public String getClienteDireccion() { return clienteDireccion; }
+
+    public void setClienteDireccion(String clienteDireccion) { this.clienteDireccion = clienteDireccion; }
+
+    public String getCanalRecordatorio() { return canalRecordatorio; }
+
+    public void setCanalRecordatorio(String canalRecordatorio) { this.canalRecordatorio = canalRecordatorio; }
 }

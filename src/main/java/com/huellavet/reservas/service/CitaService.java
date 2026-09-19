@@ -9,12 +9,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class CitaService {
-
+    private static final List<EstadoCita> ESTADOS_QUE_NO_OCUPAN_FRANJA =
+            List.of(EstadoCita.CANCELADA, EstadoCita.RECHAZADA);
     private final CitaRepository citaRepository;
     private final UsuarioRepository usuarioRepository;
     private final MascotaRepository mascotaRepository;
@@ -67,6 +71,18 @@ public class CitaService {
     @Transactional(readOnly = true)
     public Optional<CitaDto> buscarPorId(Long id) {
         return citaRepository.findById(id).map(this::convertirADto);
+    }
+
+    @Transactional(readOnly = true)
+    public List<String> listarHorasOcupadas(LocalDate fecha) {
+        if (fecha == null) {
+            throw new IllegalArgumentException("La fecha es obligatoria");
+        }
+        return citaRepository.findByFechaAndEstadoNotIn(fecha, ESTADOS_QUE_NO_OCUPAN_FRANJA).stream()
+                .map(cita -> String.format("%02d:00", cita.getHora().getHour()))
+                .distinct()
+                .sorted()
+                .toList();
     }
 
     @Transactional
@@ -156,6 +172,51 @@ public class CitaService {
     }
 
     @Transactional
+    public CitaDto guardarRecordatorio(Long id, CitaDto datos) {
+        CitaModel cita = obtenerCitaYValidarVeterinario(id);
+        if (cita.getEstado() != EstadoCita.COMPLETADA) {
+            throw new IllegalArgumentException("Solo se puede dejar un recordatorio en una cita Completada");
+        }
+        if (datos == null || textoVacio(datos.getRecordatorioTexto())) {
+            throw new IllegalArgumentException("El contenido del recordatorio es obligatorio");
+        }
+        cita.setRecordatorioTexto(datos.getRecordatorioTexto().trim());
+        cita.setRecordatorioFecha(datos.getRecordatorioFecha());
+        if (cita.getRecordatorioFechaCreacion() == null) {
+            cita.setRecordatorioFechaCreacion(OffsetDateTime.now());
+        }
+        return convertirADto(citaRepository.save(cita));
+    }
+
+    @Transactional
+    public CitaDto registrarAbono(Long id, CitaDto datos) {
+        CitaModel cita = obtenerCitaYValidarUsuario(id);
+        if (!Boolean.TRUE.equals(cita.getTieneCostoReserva())) {
+            throw new IllegalArgumentException("Esta cita no requiere abono de reserva");
+        }
+        if (datos == null || textoVacio(datos.getAbonoComprobante())) {
+            throw new IllegalArgumentException("El comprobante de pago es obligatorio");
+        }
+        cita.setAbonoComprobante(datos.getAbonoComprobante());
+        cita.setAbonoEstado("pagado");
+        cita.setAbonoFechaPago(OffsetDateTime.now());
+        return convertirADto(citaRepository.save(cita));
+    }
+
+    @Transactional
+    public CitaDto solicitarReprogramacion(Long id, String motivoEstado) {
+        CitaModel cita = obtenerCitaYValidarUsuario(id);
+        if (cita.getEstado() == EstadoCita.COMPLETADA
+                || cita.getEstado() == EstadoCita.CANCELADA
+                || cita.getEstado() == EstadoCita.RECHAZADA) {
+            throw new IllegalArgumentException("No se puede reprogramar una cita finalizada");
+        }
+        cita.setEstado(EstadoCita.REPROGRAMADA);
+        cita.setMotivoEstado(limpiarTexto(motivoEstado));
+        return convertirADto(citaRepository.save(cita));
+    }
+
+    @Transactional
     public CitaDto marcarReprogramada(Long id) {
         CitaModel cita = obtenerCitaYValidarVeterinario(id);
         cita.setEstado(EstadoCita.REPROGRAMADA);
@@ -213,6 +274,15 @@ public class CitaService {
             throw new AccesoNoAutorizadoException("Esta cita no te pertenece");
         }
         return cita;
+    }
+
+    private void validarFranjaLibre(LocalDate fecha, LocalTime hora, Long idCitaExcluida) {
+        boolean ocupada = citaRepository.findByFechaAndEstadoNotIn(fecha, ESTADOS_QUE_NO_OCUPAN_FRANJA).stream()
+                .filter(cita -> idCitaExcluida == null || !cita.getId().equals(idCitaExcluida))
+                .anyMatch(cita -> cita.getHora().getHour() == hora.getHour());
+        if (ocupada) {
+            throw new IllegalArgumentException("Ese horario ya no está disponible. Elige otra hora.");
+        }
     }
 
     private void validarDatos(CitaDto datos) {
@@ -273,11 +343,17 @@ public class CitaService {
         cita.setNombreMascota(datos.getNombreMascota().trim());
         cita.setServicioNombre(datos.getServicioNombre().trim());
 
-        if (datos.getEstado() != null) {
-            cita.setEstado(EstadoCita.desdeValor(datos.getEstado()));
-        } else if (esNueva) {
+        if (esNueva) {
             cita.setEstado(EstadoCita.PENDIENTE);
+        } else if (datos.getEstado() != null) {
+            cita.setEstado(EstadoCita.desdeValor(datos.getEstado()));
         }
+
+        cita.setClienteNombre(limpiarTexto(datos.getClienteNombre()));
+        cita.setClienteTelefono(limpiarTexto(datos.getClienteTelefono()));
+        cita.setClienteEmail(limpiarTexto(datos.getClienteEmail()));
+        cita.setClienteDireccion(limpiarTexto(datos.getClienteDireccion()));
+        cita.setCanalRecordatorio(limpiarTexto(datos.getCanalRecordatorio()));
 
         boolean tieneCosto = Boolean.TRUE.equals(datos.getTieneCostoReserva());
         cita.setTieneCostoReserva(tieneCosto);
@@ -306,6 +382,20 @@ public class CitaService {
         if (cita.getVeterinario() != null) {
             dto.setVeterinarioId(cita.getVeterinario().getId());
         }
+
+        dto.setFotoMascota(cita.getMascota().getFoto());
+        dto.setMotivoEstado(cita.getMotivoEstado());
+        dto.setAbonoEstado(cita.getAbonoEstado() != null ? cita.getAbonoEstado() : "pendiente");
+        dto.setAbonoComprobante(cita.getAbonoComprobante());
+        dto.setAbonoFechaPago(cita.getAbonoFechaPago());
+        dto.setRecordatorioTexto(cita.getRecordatorioTexto());
+        dto.setRecordatorioFecha(cita.getRecordatorioFecha());
+        dto.setRecordatorioFechaCreacion(cita.getRecordatorioFechaCreacion());
+        dto.setClienteNombre(cita.getClienteNombre());
+        dto.setClienteTelefono(cita.getClienteTelefono());
+        dto.setClienteEmail(cita.getClienteEmail());
+        dto.setClienteDireccion(cita.getClienteDireccion());
+        dto.setCanalRecordatorio(cita.getCanalRecordatorio());
 
         return dto;
     }

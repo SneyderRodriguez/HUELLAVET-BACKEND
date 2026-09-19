@@ -32,6 +32,15 @@ public class VeterinarioModel {
     @Column(columnDefinition = "TEXT")
     private String foto;
 
+    @Column(length = 20)
+    private String telefono;
+
+    @Column(name = "indicativo_pais", length = 5)
+    private String indicativoPais;
+
+    @Column(length = 100)
+    private String ciudad;
+
     @Column(nullable = false)
     private boolean activo = true;
 }
