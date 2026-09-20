@@ -322,6 +322,9 @@ public class CitaService {
                 throw new IllegalArgumentException("El costo de reserva debe ser igual o mayor que cero");
             }
         }
+        if (datos.getVeterinarioId() != null && !veterinarioRepository.existsById(datos.getVeterinarioId())) {
+            throw new IllegalArgumentException("El veterinario seleccionado no existe");
+        }
     }
 
     private void copiarDatosEditables(CitaDto datos, CitaModel cita, boolean esNueva) {
@@ -342,6 +345,12 @@ public class CitaService {
         cita.setMotivo(limpiarTexto(datos.getMotivo()));
         cita.setNombreMascota(datos.getNombreMascota().trim());
         cita.setServicioNombre(datos.getServicioNombre().trim());
+
+        if (datos.getVeterinarioId() != null) {
+            VeterinarioModel veterinario = veterinarioRepository.findById(datos.getVeterinarioId())
+                    .orElseThrow(() -> new IllegalArgumentException("El veterinario seleccionado no existe"));
+            cita.setVeterinario(veterinario);
+        }
 
         if (esNueva) {
             cita.setEstado(EstadoCita.PENDIENTE);
