@@ -52,7 +52,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/citas/*/recordatorio")
                         .hasAnyRole("VETERINARIO", "ADMINISTRADOR")
                         .requestMatchers("/api/citas/*/abono")
-                        .hasAnyRole("VETERINARIO", "ADMINISTRADOR")
+                        .hasAnyRole("USUARIO", "ADMINISTRADOR")
                         .requestMatchers("/api/citas/*/cancelar")
                         .hasAnyRole("USUARIO", "VETERINARIO", "ADMINISTRADOR")
                         .requestMatchers("/api/citas/*/reprogramar")
